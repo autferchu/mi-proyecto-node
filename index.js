@@ -1,15 +1,7 @@
-const express = require("express");
+const app = require('./src/app');
 
-const app = express();
+const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
-
-const usuariosRoutes = require("./routes/usuarios");
-const empleadosRoutes = require("./routes/empleados");
-
-app.use("/usuarios", usuariosRoutes);
-app.use("/empleados", empleadosRoutes);
-
-app.listen(3000, () => {
-    console.log("Servidor iniciado en http://localhost:3000");
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });

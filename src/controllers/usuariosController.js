@@ -143,6 +143,19 @@ exports.eliminarUsuario = (req, res) => {
         }
     );
 };
+// src/controllers/userController.js
+const userService = require('../services/userService');
 
+const getUsuarios = (req, res) => {
+  const usuarios = userService.obtenerTodosLosUsuarios();
+  res.json({
+    ok: true,
+    data: usuarios
+  });
+};
+
+module.exports = {
+  getUsuarios
+};
 
 
