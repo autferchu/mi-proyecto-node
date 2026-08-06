@@ -1,27 +1,90 @@
-const Empleado = require('../models/empleadoModel');
+const Empleado = require("../models/empleadoModel");
 
-// Controlador para obtener empleados (GET)
+// Obtener todos los empleados
 exports.getEmpleados = (req, res) => {
   Empleado.obtenerTodos((err, rows) => {
     if (err) {
-      return res.status(500).json({ error: err.message });
+      return res.status(500).json({
+        error: err.message
+      });
     }
-    res.json({ data: rows });
+
+    res.json({
+      data: rows
+    });
   });
 };
 
-// Controlador para crear un empleado (POST)
+// Crear un empleado
 exports.createEmpleado = (req, res) => {
-  const { nombre, puesto } = req.body;
-  
-  if (!nombre || !puesto) {
-    return res.status(400).json({ error: 'Nombre y puesto son obligatorios' });
+
+  const {
+    nombre,
+    apellido,
+    email,
+    puesto,
+    salario
+  } = req.body;
+
+  if (!nombre || !apellido || !email || !puesto || salario == null) {
+    return res.status(400).json({
+      error: "Todos los campos son obligatorios"
+    });
   }
 
-  Empleado.crear({ nombre, puesto }, (err, empleadoCreado) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
+  Empleado.crear(
+    {
+      nombre,
+      apellido,
+      email,
+      puesto,
+      salario
+    },
+    (err, empleadoCreado) => {
+
+      if (err) {
+        return res.status(500).json({
+          error: err.message
+        });
+      }
+
+      res.status(201).json({
+        mensaje: "Empleado creado con éxito",
+        data: empleadoCreado
+      });
+
     }
-    res.status(201).json({ mensaje: 'Empleado creado con éxito', data: empleadoCreado });
-  });
+  );
+
 };
+// Obtener un empleado por ID
+exports.getEmpleadoById = (req, res) => {
+
+  const id = req.params.id;
+
+  Empleado.obtenerPorId(id, (err, empleado) => {
+
+    if (err) {
+      return res.status(500).json({
+        error: err.message
+      });
+    }
+
+    if (!empleado) {
+      return res.status(404).json({
+        error: "Empleado no encontrado"
+      });
+    }
+
+    res.json({
+      data: empleado
+    });
+
+  });
+
+};
+// Busca esta línea en exports.createEmpleado:
+mensaje: "Empleado creado con Ã©xito"
+
+// Y reemplázala por:
+//mensaje: "Empleado creado con éxito"
