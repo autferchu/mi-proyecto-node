@@ -1,7 +1,6 @@
 const sqlite3 = require("sqlite3").verbose();
 
-// Crear conexión a la base de datos
-const db = new sqlite3.Database("./database/miapi.db", (err) => {
+const db = new sqlite3.Database("./src/database/mi_base.db", (err) => {
   if (err) {
     console.error("Error al conectar con SQLite:", err.message);
   } else {
@@ -9,5 +8,4 @@ const db = new sqlite3.Database("./database/miapi.db", (err) => {
   }
 });
 
-// Exportar la conexión
 module.exports = db;

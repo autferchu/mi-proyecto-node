@@ -2,20 +2,19 @@ const db = require("../config/db");
 
 const Empleado = {
 
-  // Obtener todos los empleados
   obtenerTodos: (callback) => {
-    const sql = "SELECT * FROM empleados";
-    db.all(sql, [], callback);
+    db.all("SELECT * FROM empleados", [], callback);
   },
 
-  // Obtener un empleado por ID
   obtenerPorId: (id, callback) => {
-    const sql = "SELECT * FROM empleados WHERE id = ?";
-    db.get(sql, [id], callback);
+    db.get(
+      "SELECT * FROM empleados WHERE id = ?",
+      [id],
+      callback
+    );
   },
 
-  // Crear un empleado
-  crear: (nuevoEmpleado, callback) => {
+  crear: (empleado, callback) => {
 
     const sql = `
       INSERT INTO empleados
@@ -26,11 +25,11 @@ const Empleado = {
     db.run(
       sql,
       [
-        nuevoEmpleado.nombre,
-        nuevoEmpleado.apellido,
-        nuevoEmpleado.email,
-        nuevoEmpleado.puesto,
-        nuevoEmpleado.salario
+        empleado.nombre,
+        empleado.apellido,
+        empleado.email,
+        empleado.puesto,
+        empleado.salario
       ],
       function (err) {
 
@@ -40,17 +39,63 @@ const Empleado = {
 
         callback(null, {
           id: this.lastID,
-          ...nuevoEmpleado
+          ...empleado
         });
 
       }
     );
+
+  },
+
+  actualizar: (id, empleado, callback) => {
+
+    const sql = `
+      UPDATE empleados
+      SET nombre=?, apellido=?, email=?, puesto=?, salario=?
+      WHERE id=?
+    `;
+
+    db.run(
+      sql,
+      [
+        empleado.nombre,
+        empleado.apellido,
+        empleado.email,
+        empleado.puesto,
+        empleado.salario,
+        id
+      ],
+      function (err) {
+
+        if (err) {
+          return callback(err);
+        }
+
+        callback(null, this.changes);
+
+      }
+    );
+
+  },
+
+  eliminar: (id, callback) => {
+
+    db.run(
+      "DELETE FROM empleados WHERE id=?",
+      [id],
+      function (err) {
+
+        if (err) {
+          return callback(err);
+        }
+
+        callback(null, this.changes);
+
+      }
+    );
+
   }
 
 };
 
 module.exports = Empleado;
-obtenerPorId: (id, callback) => {
-  const sql = "SELECT * FROM empleados WHERE id = ?";
-  db.get(sql, [id], callback);
-}
