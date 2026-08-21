@@ -1,25 +1,28 @@
-name: Playwright Tests
+﻿name: Playwright Tests
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, master ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, master ]
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+    
     - uses: actions/setup-node@v4
       with:
         node-version: 18
 
-    - name: Install dependencies
+    - name: Instalar dependencias
       run: npm ci
 
-    - name: Install Playwright Browsers
+    - name: Instalar navegadores de Playwright
       run: npx playwright install --with-deps
 
-    - name: Run Playwright tests
-      run: npx playwright test
+    - name: Iniciar servidor backend y correr tests
+      run: |
+        node index.js &
+        npx playwright test
