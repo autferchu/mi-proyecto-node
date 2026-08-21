@@ -1,4 +1,4 @@
-name: Playwright Tests
+﻿name: Playwright Tests
 
 on:
   push:
@@ -22,7 +22,5 @@ jobs:
     - name: Instalar navegadores de Playwright
       run: npx playwright install --with-deps
 
-    - name: Iniciar servidor backend y correr tests
-      run: |
-        node index.js &
-        npx playwright test
+    - name: Correr tests de Playwright
+      run: npx playwright test
