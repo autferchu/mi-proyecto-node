@@ -1,13 +1,14 @@
-import { defineConfig } from '@playwright/test';
+const { defineConfig } = require('@playwright/test');
 
-export default defineConfig({
+module.exports = defineConfig({
+  testDir: './tests', // O la carpeta donde tengas guardados tus tests
   use: {
-    // 1. Cambia localhost por 127.0.0.1
-    baseURL: 'http://127.0.0.1:3000', 
+    baseURL: 'http://127.0.0.1:3000',
   },
   webServer: {
-    command: 'npm run start', // El comando con el que levantas tu aplicación
-    url: 'http://127.0.0.1:3000', // 2. Aquí también usa 127.0.0.1
+    command: 'npm start', // Asegúrate de que sea el comando con el que inicia tu servidor Node
+    url: 'http://127.0.0.1:3000',
     reuseExistingServer: !process.env.CI,
+    timeout: 120 * 1000,
   },
 });
