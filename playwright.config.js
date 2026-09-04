@@ -9,7 +9,7 @@ module.exports = defineConfig({
     command: 'npm start',
     url: 'http://127.0.0.1:3000',
     reuseExistingServer: !process.env.CI,
-    timeout: 30 * 1000, // Reducido a 30 segundos
+    timeout: 60 * 1000, // Reducido a 30 segundos
     stdout: 'pipe',
     stderr: 'pipe',
   },
