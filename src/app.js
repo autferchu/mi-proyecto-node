@@ -1,15 +1,31 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
 
 const rutasEmpleados = require("./routes/empleadosRoutes");
 
-// Middleware para leer JSON
-app.use(express.json());
+app.set("trust proxy", 1);
+app.disable("x-powered-by");
 
-// Rutas de empleados
+app.use(
+  cors({
+    origin: true,
+    credentials: true
+  })
+);
+
+app.use(express.json({ limit: "1mb" }));
+
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    ok: true,
+    message: "API funcionando correctamente",
+    environment: process.env.NODE_ENV || "development"
+  });
+});
+
 app.use("/api", rutasEmpleados);
 
-// Ruta de prueba
 app.get("/api/test", (req, res) => {
   res.json({
     mensaje: "El servidor responde correctamente"
