@@ -1,9 +1,7 @@
-
 const sqlite3 = require("sqlite3").verbose();
 const { Pool } = require("pg");
 const path = require("path");
 
-<<<<<<< HEAD
 const createSqliteDb = () => {
   const dbPath = path.resolve(__dirname, "../../database/miapi.db");
 
@@ -23,9 +21,15 @@ const createSqliteDb = () => {
         apellido TEXT NOT NULL,
         email TEXT UNIQUE NOT NULL,
         puesto TEXT NOT NULL,
-        salario REAL NOT NULL
+        salario REAL NOT NULL CHECK (salario > 0)
       )
-    `);
+    `, (err) => {
+      if (err) {
+        console.error("Error al crear la tabla en SQLite:", err.message);
+      } else {
+        console.log("Tabla empleados verificada correctamente");
+      }
+    });
   });
 
   return {
@@ -133,39 +137,5 @@ const createPostgresDb = () => {
 };
 
 const db = process.env.DATABASE_URL ? createPostgresDb() : createSqliteDb();
-=======
-const db = new sqlite3.Database(
-  "./src/database/mi_base.db",
-  (err) => {
-    if (err) {
-      console.error("Error al conectar con SQLite:", err.message);
-      return;
-    }
-
-    console.log("Conectado a SQLite");
-  }
-);
-
-// Crear la tabla si todavía no existe
-db.serialize(() => {
-  db.run(
-    `CREATE TABLE IF NOT EXISTS empleados (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      nombre TEXT NOT NULL,
-      apellido TEXT NOT NULL,
-      email TEXT NOT NULL UNIQUE,
-      puesto TEXT NOT NULL,
-      salario REAL NOT NULL CHECK (salario > 0)
-    )`,
-    (err) => {
-      if (err) {
-        console.error("Error al crear la tabla:", err.message);
-      } else {
-        console.log("Tabla empleados verificada correctamente");
-      }
-    }
-  );
-});
->>>>>>> a4710ac (Corregir configuracion del servidor y Playwright para CI)
 
 module.exports = db;
