@@ -45,7 +45,7 @@ module.exports = defineConfig({
     command: 'HOST=127.0.0.1 npm start',
     url: 'http://127.0.0.1:3000/health',
     reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
+    timeout: 120_000, // Margen amplio para que CI levante dependencias y SQLite sin prisa
     stdout: 'pipe',
     stderr: 'pipe',
   },

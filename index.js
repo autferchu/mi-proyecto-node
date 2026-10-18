@@ -1,9 +1,10 @@
-const app = require("./src/app");
 
 const PORT = process.env.PORT || 3000;
+const HOST = process.env.HOST || '127.0.0.1';
 
-app.listen(PORT, "0.0.0.0", () => {
-  console.log("===========================================");
-  console.log(`Servidor corriendo en puerto ${PORT}`);
-  console.log("===========================================");
+app.listen(PORT, HOST, () => {
+  console.log(`===========================================`);
+  console.log(`Servidor corriendo en http://${HOST}:${PORT}`);
+  console.log(`===========================================`);
+  console.log(`Conectado a SQLite`);
 });
