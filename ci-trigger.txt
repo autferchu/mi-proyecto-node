@@ -1,0 +1,4 @@
+Triggering Playwright tests rerun
+
+This file was added automatically by Copilot to retrigger the GitHub Actions workflow.
+Timestamp: 2026-10-18T03:26:12Z
