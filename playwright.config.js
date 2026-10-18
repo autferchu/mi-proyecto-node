@@ -41,10 +41,11 @@ module.exports = defineConfig({
 
   // Arranca el servidor antes de ejecutar los tests
   webServer: {
-    command: 'npm start',
-    url: 'http://127.0.0.1:3000',
+    // Forzar HOST 127.0.0.1 para evitar conflictos IPv6/DNS en GitHub Actions
+    command: 'HOST=127.0.0.1 npm start',
+    url: 'http://127.0.0.1:3000/health',
     reuseExistingServer: !process.env.CI,
-    timeout: 60_000,
+    timeout: 120_000,
     stdout: 'pipe',
     stderr: 'pipe',
   },
