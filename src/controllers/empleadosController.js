@@ -29,9 +29,9 @@ exports.getEmpleadoById = (req, res) => {
 };
 
 exports.createEmpleado = (req, res) => {
-  const { nombre, apellido, email, puesto, salario } = req.body;
+  const { nombre, apellido, email, puesto, salario, tipo_documento } = req.body;
 
-  if ([nombre, apellido, email, puesto, salario].some((valor) => valor == null)) {
+  if ([nombre, apellido, email, puesto, tipo_documento].some((valor) => valor == null || String(valor).trim() === "")) {
     return res.status(400).json({ error: "Todos los campos son obligatorios" });
   }
 
@@ -39,7 +39,8 @@ exports.createEmpleado = (req, res) => {
   const apellidoLimpio = String(apellido).trim();
   const emailLimpio = String(email).trim();
   const puestoLimpio = String(puesto).trim();
-  const salarioNumero = Number(salario);
+  const tipoDocumentoLimpio = String(tipo_documento).trim();
+  const salarioNumero = Number.isFinite(Number(salario)) ? Number(salario) : 0;
 
   if (nombreLimpio.length < 2) {
     return res.status(400).json({ error: "El nombre debe tener al menos 2 caracteres" });
@@ -65,8 +66,8 @@ exports.createEmpleado = (req, res) => {
     return res.status(400).json({ error: "El puesto debe tener al menos 2 caracteres" });
   }
 
-  if (!Number.isFinite(salarioNumero) || salarioNumero <= 0) {
-    return res.status(400).json({ error: "El salario debe ser un número mayor que 0" });
+  if (tipoDocumentoLimpio.length < 2) {
+    return res.status(400).json({ error: "El tipo de documento es obligatorio" });
   }
 
   Empleado.obtenerPorEmail(emailLimpio, (err, empleadoExistente) => {
@@ -84,7 +85,8 @@ exports.createEmpleado = (req, res) => {
         apellido: apellidoLimpio,
         email: emailLimpio,
         puesto: puestoLimpio,
-        salario: salarioNumero
+        salario: salarioNumero,
+        tipo_documento: tipoDocumentoLimpio
       },
       (error, empleadoCreado) => {
         if (error) {
@@ -102,7 +104,7 @@ exports.createEmpleado = (req, res) => {
 
 exports.updateEmpleado = (req, res) => {
   const id = req.params.id;
-  const { nombre, apellido, email, puesto, salario } = req.body;
+  const { nombre, apellido, email, puesto, salario, tipo_documento } = req.body;
 
   Empleado.obtenerPorId(id, (err, empleadoActual) => {
     if (err) {
@@ -117,7 +119,8 @@ exports.updateEmpleado = (req, res) => {
     const apellidoFinal = apellido == null ? empleadoActual.apellido : String(apellido).trim();
     const emailFinal = email == null ? empleadoActual.email : String(email).trim();
     const puestoFinal = puesto == null ? empleadoActual.puesto : String(puesto).trim();
-    const salarioFinal = salario == null ? empleadoActual.salario : Number(salario);
+    const tipoDocumentoFinal = tipo_documento == null ? (empleadoActual.tipo_documento || "Cédula") : String(tipo_documento).trim();
+    const salarioFinal = salario == null ? (empleadoActual.salario ?? 0) : Number(salario);
 
     if (nombreFinal.length < 2) {
       return res.status(400).json({ error: "El nombre debe tener al menos 2 caracteres" });
@@ -143,8 +146,8 @@ exports.updateEmpleado = (req, res) => {
       return res.status(400).json({ error: "El puesto debe tener al menos 2 caracteres" });
     }
 
-    if (!Number.isFinite(salarioFinal) || salarioFinal <= 0) {
-      return res.status(400).json({ error: "El salario debe ser un número mayor que 0" });
+    if (tipoDocumentoFinal.length < 2) {
+      return res.status(400).json({ error: "El tipo de documento es obligatorio" });
     }
 
     Empleado.obtenerPorEmail(emailFinal, (emailErr, empleadoConEmail) => {
@@ -163,7 +166,8 @@ exports.updateEmpleado = (req, res) => {
           apellido: apellidoFinal,
           email: emailFinal,
           puesto: puestoFinal,
-          salario: salarioFinal
+          salario: Number.isFinite(salarioFinal) ? salarioFinal : 0,
+          tipo_documento: tipoDocumentoFinal
         },
         (updateErr, cambios) => {
           if (updateErr) {
@@ -203,5 +207,18 @@ exports.deleteEmpleado = (req, res) => {
     }
 
     return res.json({ mensaje: "Empleado eliminado correctamente" });
+  });
+};
+
+exports.deleteAllEmpleados = (req, res) => {
+  Empleado.eliminarTodos((err, cambios) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+
+    return res.json({
+      mensaje: "Todos los empleados fueron eliminados correctamente",
+      eliminados: cambios
+    });
   });
 };

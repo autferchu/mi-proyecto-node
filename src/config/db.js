@@ -21,9 +21,16 @@ const createSqliteDb = () => {
         apellido TEXT NOT NULL,
         email TEXT UNIQUE NOT NULL,
         puesto TEXT NOT NULL,
-        salario REAL NOT NULL
-      )
-    `);
+      salario REAL NOT NULL DEFAULT 0,
+      tipo_documento TEXT NOT NULL DEFAULT 'Cédula'
+    )
+  `);
+
+  db.run(`ALTER TABLE empleados ADD COLUMN tipo_documento TEXT DEFAULT 'Cédula'`, (err) => {
+    if (err && !String(err.message).includes('duplicate column')) {
+      console.warn('No se pudo añadir la columna tipo_documento:', err.message);
+    }
+  });
   });
 
   return {
@@ -78,7 +85,8 @@ const createPostgresDb = () => {
       apellido TEXT NOT NULL,
       email TEXT UNIQUE NOT NULL,
       puesto TEXT NOT NULL,
-      salario NUMERIC NOT NULL CHECK (salario > 0)
+      salario NUMERIC NOT NULL DEFAULT 0,
+      tipo_documento TEXT NOT NULL DEFAULT 'Cédula'
     )
   `)
     .then(() => console.log("Conectado a PostgreSQL"))

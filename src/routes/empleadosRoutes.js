@@ -15,6 +15,9 @@ router.post("/empleados", empleadosController.createEmpleado);
 // Actualizar un empleado
 router.put("/empleados/:id", empleadosController.updateEmpleado);
 
+// Eliminar todos los empleados
+router.delete("/empleados", empleadosController.deleteAllEmpleados);
+
 // Eliminar un empleado
 router.delete("/empleados/:id", empleadosController.deleteEmpleado);
 

@@ -16,8 +16,8 @@ const Empleado = {
   crear: (empleado, callback) => {
     const sql = `
       INSERT INTO empleados
-      (nombre, apellido, email, puesto, salario)
-      VALUES (?, ?, ?, ?, ?)
+      (nombre, apellido, email, puesto, salario, tipo_documento)
+      VALUES (?, ?, ?, ?, ?, ?)
     `;
 
     db.run(
@@ -27,7 +27,8 @@ const Empleado = {
         empleado.apellido,
         empleado.email,
         empleado.puesto,
-        empleado.salario
+        Number.isFinite(Number(empleado.salario)) ? Number(empleado.salario) : 0,
+        empleado.tipo_documento || "Cédula"
       ],
       (err, result) => {
         if (err) {
@@ -64,7 +65,7 @@ const Empleado = {
   actualizar: (id, empleado, callback) => {
     const sql = `
       UPDATE empleados
-      SET nombre = ?, apellido = ?, email = ?, puesto = ?, salario = ?
+      SET nombre = ?, apellido = ?, email = ?, puesto = ?, salario = ?, tipo_documento = ?
       WHERE id = ?
     `;
 
@@ -75,7 +76,8 @@ const Empleado = {
         empleado.apellido,
         empleado.email,
         empleado.puesto,
-        empleado.salario,
+        Number.isFinite(Number(empleado.salario)) ? Number(empleado.salario) : 0,
+        empleado.tipo_documento || "Cédula",
         id
       ],
       (err, result) => {
@@ -91,6 +93,17 @@ const Empleado = {
 
   eliminar: (id, callback) => {
     db.run("DELETE FROM empleados WHERE id = ?", [id], (err, result) => {
+      if (err) {
+        return callback(err);
+      }
+
+      const cambios = result && typeof result.changes === "number" ? result.changes : 0;
+      callback(null, cambios);
+    });
+  },
+
+  eliminarTodos: (callback) => {
+    db.run("DELETE FROM empleados", [], (err, result) => {
       if (err) {
         return callback(err);
       }
